@@ -20,6 +20,11 @@ export default Component.extend({
     return actionKey === "replace";
   },
 
+  @discourseComputed("actionKey")
+  canTag(actionKey) {
+    return actionKey === "tag";
+  },
+
   @discourseComputed("regularExpressions")
   placeholderKey(regularExpressions) {
     return (
@@ -61,7 +66,7 @@ export default Component.extend({
 
         const watchedWord = WatchedWord.create({
           word: this.word,
-          replacement: this.canReplace ? this.replacement : null,
+          replacement: this.canReplace || this.canTag ? this.replacement : null,
           action: this.actionKey,
         });
 
