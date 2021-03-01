@@ -6,6 +6,7 @@ import Component from "@ember/component";
 import I18n from "I18n";
 import WatchedWord from "admin/models/watched-word";
 import bootbox from "bootbox";
+import { equal } from "@ember/object/computed";
 import { isEmpty } from "@ember/utils";
 import { schedule } from "@ember/runloop";
 
@@ -15,15 +16,8 @@ export default Component.extend({
   actionKey: null,
   showMessage: false,
 
-  @discourseComputed("actionKey")
-  canReplace(actionKey) {
-    return actionKey === "replace";
-  },
-
-  @discourseComputed("actionKey")
-  canTag(actionKey) {
-    return actionKey === "tag";
-  },
+  canReplace: equal("actionKey", "replace"),
+  canTag: equal("actionKey", "tag"),
 
   @discourseComputed("regularExpressions")
   placeholderKey(regularExpressions) {

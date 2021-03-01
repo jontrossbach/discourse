@@ -110,4 +110,12 @@ class WordWatcher
       false
     end
   end
+
+  def word_matches?(word)
+    if SiteSetting.watched_words_regular_expressions?
+      Regexp.new(word).match?(@raw)
+    else
+      @raw.include?(word)
+    end
+  end
 end

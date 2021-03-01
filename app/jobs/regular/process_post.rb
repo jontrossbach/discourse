@@ -62,20 +62,21 @@ module Jobs
     end
 
     def auto_tag(post)
-      topic_tags = post.topic.tags.pluck(:name)
-      changed = false
+      word_watcher = WordWatcher.new(post.raw)
+
+      old_tags = post.topic.tags.pluck(:name).to_set
+      new_tags = old_tags.dup
 
       WordWatcher.words_for_action(:tag).each do |word, tags|
-        if SiteSetting.watched_words_regular_expressions? ? Regexp.new(word).match?(post.raw) : post.raw.include?(word)
-          topic_tags += tags.split(",")
-          changed = true
+        if word_watcher.word_matches?(word)
+          new_tags += tags.split(",")
         end
       end
 
-      if changed
+      if old_tags != new_tags
         post.revise(
           Discourse.system_user,
-          tags: topic_tags.uniq,
+          tags: new_tags.to_a,
           edit_reason: I18n.t(:watched_words_auto_tag)
         )
       end
